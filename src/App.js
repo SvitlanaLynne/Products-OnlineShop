@@ -1,15 +1,14 @@
-
-import './App.css';
-import Logo from './components/Logo';
-import Products from './components/Products';
+import "./App.css";
+import Logo from "./components/Logo";
+import Products from "./components/Products";
+// import Filters from "./components/Filters";
 
 function App() {
   return (
-    <div >
-    
-          <Logo />
-          <Products />
-
+    <div>
+      <Logo />
+      {/* <Filters /> */}
+      <Products />
     </div>
   );
 }
