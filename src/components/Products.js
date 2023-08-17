@@ -4,8 +4,15 @@ import ProductRow from "./ProductRow";
 import DropDownMenu from "./DropDownMenu";
 
 function Products() {
+  const rowsNumberArr = [3, 5, 10];
+
   const [data, setData] = useState([]);
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [rowsNumber, setRowsNumber] = useState(
+    rowsNumberArr[rowsNumberArr.length - 1]
+  );
+  const [filtersArr, setFiltersArr] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     const apiURL = "https://fakestoreapi.com/products";
@@ -13,47 +20,60 @@ function Products() {
     fetch(apiURL)
       .then((res) => res.json())
       .then((data) => {
-        setData(data);
-        console.log(data); // <===========================  temp console.log to see the product details
+        setData(data); // all data on the screen
+
+        setFiltersArr([...new Set(data.map((product) => product.category))]); // array of filters to use
+
+        let slicedData = data.slice(0, rowsNumber);
+        setData(slicedData); // portion of data on the screen - by number of raws
+
+        let filteredSlicedData = data // first filter, then slice
+          .filter((product) => selectedFilters.includes(product.category))
+          .slice(0, rowsNumber);
+        setFilteredData(filteredSlicedData); // portion of data on the screen
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, []);
+  }, [selectedFilters, rowsNumber]);
 
+  // ===============  ROWS  ===============
+  const handleOptionChange = (event) => {
+    const selectedValue = parseInt(event.target.value);
+
+    setRowsNumber(selectedValue);
+  };
+
+  // ===============  FILTERS  ===============
   const handleOptionClick = (category) => {
-    setSelectedOptions((prevSelectedOptions) =>
+    setSelectedFilters((prevSelectedOptions) =>
       prevSelectedOptions.includes(category)
         ? prevSelectedOptions.filter((elem) => elem !== category)
         : [...prevSelectedOptions, category]
     );
   };
 
-  const filteredData = data.filter((product) =>
-    selectedOptions.includes(product.category)
-  );
-
-  const filterOptions = () => {
-    const categoriesSet = new Set(data.map((product) => product.category));
-    return [...categoriesSet];
-  };
-
-  const options = filterOptions();
-
   return (
     <>
-      <DropDownMenu />
+      {/* ===============  rows dropdown menu =============== */}
+      <DropDownMenu
+        rowsNumber={rowsNumber}
+        handleOptionChange={handleOptionChange}
+        rowsNumberArr={rowsNumberArr}
+      />
+      {/*  =============== filters ============== */}
       <div className="filter-options">
-        {options.length > 0 &&
-          options.map((category) => (
+        {filtersArr.length > 0 &&
+          filtersArr.map((category) => (
             <FilterButton
               key={category}
               category={category}
-              isSelected={selectedOptions.includes(category)}
+              isSelected={selectedFilters.includes(category)}
               onClick={handleOptionClick}
             />
           ))}
       </div>
+      {/* =============== table =============== */}
       <table>
         <thead>
           <tr>
@@ -65,7 +85,7 @@ function Products() {
           </tr>
         </thead>
         <tbody>
-          {selectedOptions.length > 0
+          {selectedFilters.length > 0
             ? filteredData.map((product) => (
                 <ProductRow key={product.id} product={product} />
               ))
