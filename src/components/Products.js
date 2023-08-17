@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import FilterButton from "./FilterButton";
+import ProductRow from "./ProductRow";
 
 function Products() {
   const [data, setData] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     const apiURL = "https://fakestoreapi.com/products";
@@ -13,46 +13,37 @@ function Products() {
       .then((res) => res.json())
       .then((data) => {
         setData(data);
-        console.log(data);
+        console.log(data); // <===========================  temp console.log to see the product details
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
   }, []);
 
-  useEffect(() => {
-    const updatedFilteredData = data.filter((product) =>
-      selectedOptions.includes(product.category)
+  const handleOptionClick = (category) => {
+    setSelectedOptions((prevSelectedOptions) =>
+      prevSelectedOptions.includes(category)
+        ? prevSelectedOptions.filter((elem) => elem !== category)
+        : [...prevSelectedOptions, category]
     );
-    setFilteredData(updatedFilteredData);
-  }, [selectedOptions, data]);
+  };
 
-  // array of categories
+  const filteredData = data.filter((product) =>
+    selectedOptions.includes(product.category)
+  );
+
   const filterOptions = () => {
     const categoriesSet = new Set(data.map((product) => product.category));
     return [...categoriesSet];
   };
 
-  const handleOptionClick = (category) => {
-    if (selectedOptions.includes(category)) {
-      setSelectedOptions((prevSelectedOptions) =>
-        prevSelectedOptions.filter((elem) => elem !== category)
-      );
-      console.log("SELECTED FILTERS", selectedOptions);
-    } else {
-      setSelectedOptions((prevSelectedOptions) => [
-        ...prevSelectedOptions,
-        category,
-      ]);
-      console.log("SELECTED FILTERS", selectedOptions);
-    }
-  };
+  const options = filterOptions();
 
   return (
     <>
       <div className="filter-options">
-        {filterOptions().length > 0 &&
-          filterOptions().map((category) => (
+        {options.length > 0 &&
+          options.map((category) => (
             <FilterButton
               key={category}
               category={category}
@@ -74,38 +65,10 @@ function Products() {
         <tbody>
           {selectedOptions.length > 0
             ? filteredData.map((product) => (
-                <tr key={product.id}>
-                  <td>{product.id}</td>
-                  <td>{product.title}</td>
-                  <td>
-                    <img
-                      src={product.image}
-                      alt="Product"
-                      width="100"
-                      height="100"
-                    />
-                  </td>
-                  <td>Image</td>
-                  <td>{product.price}</td>
-                  <td>{product.rating.rate}</td>
-                </tr>
+                <ProductRow key={product.id} product={product} />
               ))
             : data.map((product) => (
-                <tr key={product.id}>
-                  <td>{product.id}</td>
-                  <td>{product.title}</td>
-                  <td>
-                    <img
-                      src={product.image}
-                      alt="Product"
-                      width="100"
-                      height="100"
-                    />
-                  </td>
-                  <td>Image</td>
-                  <td>{product.price}</td>
-                  <td>{product.rating.rate}</td>
-                </tr>
+                <ProductRow key={product.id} product={product} />
               ))}
         </tbody>
       </table>
