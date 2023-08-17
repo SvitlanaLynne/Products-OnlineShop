@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import FilterButton from "./FilterButton";
 import ProductRow from "./ProductRow";
+import DropDownMenu from "./DropDownMenu";
 
 function Products() {
   const [data, setData] = useState([]);
@@ -41,6 +42,7 @@ function Products() {
 
   return (
     <>
+      <DropDownMenu />
       <div className="filter-options">
         {options.length > 0 &&
           options.map((category) => (
