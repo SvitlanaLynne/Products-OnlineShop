@@ -13,11 +13,10 @@ function Products() {
     rowsNumberArr[rowsNumberArr.length - 1]
   );
   const [filtersArr, setFiltersArr] = useState([]);
-  const [configuredData, setConfiguredData] = useState([]);
+  const [filteredAndSortedData, setFilteredAndSortedData] = useState([]);
 
-  const [sortedData, setSortedData] = useState([]);
+  let column = "Id";
 
-  const column = "Id";
   const [sortConfig, setSortConfig] = useState({ column: "Id", order: "asc" });
 
   useEffect(() => {
@@ -27,58 +26,41 @@ function Products() {
       .then((res) => res.json())
       .then((data) => {
         setData(data);
-
-        /*  =============== filters ============== */
         setFiltersArr([
           "all",
           ...new Set(data.map((product) => product.category)),
-        ]); // array of filters to use
-
-        /*  =============== rows ============== */
-        let slicedData = data.slice(0, rowsNumber);
-        setData(slicedData);
-
-        const resetSelectedFiltersArr = () => {
-          setSelectedFilters([]);
-        };
-        let filteredSlicedData = data
-          .filter((product) =>
-            selectedFilters.includes("all")
-              ? resetSelectedFiltersArr()
-              : selectedFilters.includes(product.category)
-          )
-          .slice(0, rowsNumber);
-        setConfiguredData(filteredSlicedData); //  filtered, then sliced
-
-        /*  =============== sorting ============== */
-
-        const sortOrder = sortConfig.order === "asc" ? 1 : -1;
-
-        let sortedAllData = [...data];
-        let filteredSlicedSortedData = [...filteredSlicedData];
-
-        if (sortConfig.column === "Id") {
-          sortedAllData.sort((a, b) => {
-            return sortOrder * (a.id - b.id);
-          });
-          filteredSlicedSortedData.sort((a, b) => {
-            return sortOrder * (a.id - b.id);
-          });
-        }
-        setSortedData(sortedAllData);
-        setConfiguredData(filteredSlicedSortedData);
+        ]);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, [selectedFilters, rowsNumber, sortConfig]);
+  }, []);
 
-  // ===============  ROWS  ===============
-  const handleRowOptionChange = (event) => {
-    const selectedValue = parseInt(event.target.value);
+  // ===============  Filter > Sort > Slice  ===============
+  useEffect(() => {
+    const resetSelectedFiltersArr = () => {
+      setSelectedFilters([]);
+    };
 
-    setRowsNumber(selectedValue);
-  };
+    const filteredData = data.filter((product) => {
+      if (selectedFilters.length === 0) {
+        return true;
+      } else if (selectedFilters.includes("all")) {
+        resetSelectedFiltersArr();
+        return true;
+      } else {
+        return selectedFilters.includes(product.category);
+      }
+    });
+
+    const sortedData = [...filteredData].sort((a, b) => {
+      const sortOrder = sortConfig.order === "asc" ? 1 : -1;
+      return sortOrder * (a.id - b.id);
+    });
+
+    const slicedData = sortedData.slice(0, rowsNumber);
+    setFilteredAndSortedData(slicedData);
+  }, [selectedFilters, rowsNumber, sortConfig, data, filtersArr.length]);
 
   // ===============  FILTERS  ===============
   const handleOptionClick = (category) => {
@@ -91,6 +73,13 @@ function Products() {
   // ===============  SORTING  ===============
   const handleSort = (newSortConfig) => {
     setSortConfig(newSortConfig);
+  };
+
+  // ===============  ROWS  ===============
+  const handleRowOptionChange = (event) => {
+    const selectedValue = parseInt(event.target.value);
+
+    setRowsNumber(selectedValue);
   };
 
   return (
@@ -131,13 +120,9 @@ function Products() {
           </tr>
         </thead>
         <tbody>
-          {selectedFilters.length > 0
-            ? configuredData.map((product) => (
-                <ProductRow key={product.id} product={product} />
-              ))
-            : sortedData.map((product) => (
-                <ProductRow key={product.id} product={product} />
-              ))}
+          {filteredAndSortedData.map((product) => (
+            <ProductRow key={product.id} product={product} />
+          ))}
         </tbody>
       </table>
     </>
