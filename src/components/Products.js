@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import FilterButton from "./FilterButton";
 import ProductRow from "./ProductRow";
 import DropDownMenu from "./DropDownMenu";
+import SortedColumn from "./SortedColumn";
 
 function Products() {
   const rowsNumberArr = [3, 5, 10];
@@ -12,7 +13,12 @@ function Products() {
     rowsNumberArr[rowsNumberArr.length - 1]
   );
   const [filtersArr, setFiltersArr] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [configuredData, setConfiguredData] = useState([]);
+
+  const [sortedData, setSortedData] = useState([]);
+
+  const column = "Id";
+  const [sortConfig, setSortConfig] = useState({ column: "Id", order: "asc" });
 
   useEffect(() => {
     const apiURL = "https://fakestoreapi.com/products";
@@ -20,25 +26,55 @@ function Products() {
     fetch(apiURL)
       .then((res) => res.json())
       .then((data) => {
-        setData(data); // all data on the screen
+        setData(data);
 
-        setFiltersArr([...new Set(data.map((product) => product.category))]); // array of filters to use
+        /*  =============== filters ============== */
+        setFiltersArr([
+          "all",
+          ...new Set(data.map((product) => product.category)),
+        ]); // array of filters to use
 
+        /*  =============== rows ============== */
         let slicedData = data.slice(0, rowsNumber);
-        setData(slicedData); // portion of data on the screen - by number of raws
+        setData(slicedData);
 
-        let filteredSlicedData = data // first filter, then slice
-          .filter((product) => selectedFilters.includes(product.category))
+        const resetSelectedFiltersArr = () => {
+          setSelectedFilters([]);
+        };
+        let filteredSlicedData = data
+          .filter((product) =>
+            selectedFilters.includes("all")
+              ? resetSelectedFiltersArr()
+              : selectedFilters.includes(product.category)
+          )
           .slice(0, rowsNumber);
-        setFilteredData(filteredSlicedData); // portion of data on the screen
+        setConfiguredData(filteredSlicedData); //  filtered, then sliced
+
+        /*  =============== sorting ============== */
+
+        const sortOrder = sortConfig.order === "asc" ? 1 : -1;
+
+        let sortedAllData = [...data];
+        let filteredSlicedSortedData = [...filteredSlicedData];
+
+        if (sortConfig.column === "Id") {
+          sortedAllData.sort((a, b) => {
+            return sortOrder * (a.id - b.id);
+          });
+          filteredSlicedSortedData.sort((a, b) => {
+            return sortOrder * (a.id - b.id);
+          });
+        }
+        setSortedData(sortedAllData);
+        setConfiguredData(filteredSlicedSortedData);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, [selectedFilters, rowsNumber]);
+  }, [selectedFilters, rowsNumber, sortConfig]);
 
   // ===============  ROWS  ===============
-  const handleOptionChange = (event) => {
+  const handleRowOptionChange = (event) => {
     const selectedValue = parseInt(event.target.value);
 
     setRowsNumber(selectedValue);
@@ -52,13 +88,17 @@ function Products() {
         : [...prevSelectedOptions, category]
     );
   };
+  // ===============  SORTING  ===============
+  const handleSort = (newSortConfig) => {
+    setSortConfig(newSortConfig);
+  };
 
   return (
     <>
       {/* ===============  rows dropdown menu =============== */}
       <DropDownMenu
         rowsNumber={rowsNumber}
-        handleOptionChange={handleOptionChange}
+        handleOptionChange={handleRowOptionChange}
         rowsNumberArr={rowsNumberArr}
       />
       {/*  =============== filters ============== */}
@@ -77,7 +117,13 @@ function Products() {
       <table>
         <thead>
           <tr>
-            <th>Id</th>
+            {/* ===============  sorting  =============== */}
+            <SortedColumn
+              column={column}
+              sortConfig={sortConfig}
+              handleSort={handleSort}
+            />
+
             <th>Title</th>
             <th>Photo</th>
             <th>Price</th>
@@ -86,10 +132,10 @@ function Products() {
         </thead>
         <tbody>
           {selectedFilters.length > 0
-            ? filteredData.map((product) => (
+            ? configuredData.map((product) => (
                 <ProductRow key={product.id} product={product} />
               ))
-            : data.map((product) => (
+            : sortedData.map((product) => (
                 <ProductRow key={product.id} product={product} />
               ))}
         </tbody>
