@@ -3,41 +3,27 @@ import FilterButton from "./FilterButton";
 import ProductRow from "./ProductRow";
 import DropDownMenu from "./DropDownMenu";
 import SortedColumn from "./SortedColumn";
+import { useProductsDataContext } from "../components/ProductsDataContext";
 
 function Products() {
+  const data = useProductsDataContext();
   const rowsNumberArr = [3, 5, 10];
-
-  const [data, setData] = useState([]);
+  const [filtersArr, setFiltersArr] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [rowsNumber, setRowsNumber] = useState(
     rowsNumberArr[rowsNumberArr.length - 1]
   );
-  const [filtersArr, setFiltersArr] = useState([]);
+
   const [filteredAndSortedData, setFilteredAndSortedData] = useState([]);
 
   let column = "Id";
 
   const [sortConfig, setSortConfig] = useState({ column: "Id", order: "asc" });
 
-  useEffect(() => {
-    const apiURL = "https://fakestoreapi.com/products";
-
-    fetch(apiURL)
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        setFiltersArr([
-          "all",
-          ...new Set(data.map((product) => product.category)),
-        ]);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, []);
-
   // ===============  Filter > Sort > Slice  ===============
   useEffect(() => {
+    setFiltersArr(["all", ...new Set(data.map((product) => product.category))]);
+
     const resetSelectedFiltersArr = () => {
       setSelectedFilters([]);
     };
