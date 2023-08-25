@@ -70,14 +70,8 @@ function Products() {
 
   return (
     <>
-      {/* ===============  rows dropdown menu =============== */}
-      <DropDownMenu
-        rowsNumber={rowsNumber}
-        handleOptionChange={handleRowOptionChange}
-        rowsNumberArr={rowsNumberArr}
-      />
       {/*  =============== filters ============== */}
-      <div className="filter-options">
+      <div className="flex w-9/12 mx-auto text-sm italic">
         {filtersArr.length > 0 &&
           filtersArr.map((category) => (
             <FilterButton
@@ -88,8 +82,14 @@ function Products() {
             />
           ))}
       </div>
+      {/* ===============  rows dropdown menu =============== */}
+      <DropDownMenu
+        rowsNumber={rowsNumber}
+        handleOptionChange={handleRowOptionChange}
+        rowsNumberArr={rowsNumberArr}
+      />
       {/* =============== table =============== */}
-      <table>
+      <table className="bg-white">
         <thead>
           <tr>
             {/* ===============  sorting  =============== */}

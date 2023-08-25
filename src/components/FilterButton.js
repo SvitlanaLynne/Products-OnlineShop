@@ -1,7 +1,7 @@
 function FilterButton({ category, isSelected, onClick }) {
   return (
     <div
-      className={`filter-button ${isSelected ? "selected" : ""}`}
+      className="flex-1 max-w-lg text-center"
       onClick={() => onClick(category)}
     >
       {isSelected && <span>✔</span>}
