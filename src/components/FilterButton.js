@@ -1,10 +1,7 @@
 function FilterButton({ category, isSelected, onClick }) {
   return (
-    <div
-      className="flex-1 max-w-lg text-center"
-      onClick={() => onClick(category)}
-    >
-      {isSelected && <span>✔</span>}
+    <div className="flex px-6" onClick={() => onClick(category)}>
+      {isSelected && <span className="px-2">✔</span>}
       {category}
     </div>
   );

@@ -4,7 +4,7 @@ function DropDownMenu({
   rowsNumberArr,
 }) {
   return (
-    <>
+    <div className="text-base text-blue-900 px-5">
       <label className="italic">Select the number of items to display</label>
       <select
         className="bg-transparent italic text-blue-900 font-bold p-2"
@@ -19,7 +19,7 @@ function DropDownMenu({
           );
         })}
       </select>
-    </>
+    </div>
   );
 }
 

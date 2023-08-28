@@ -18,7 +18,7 @@ function SortedColumn({ column, sortConfig, handleSort }) {
   };
 
   return (
-    <th onClick={handleHeaderClick}>
+    <th className="px-8 py-6 font-light" onClick={handleHeaderClick}>
       {column}
       {<FontAwesomeIcon icon={sortIcon} />}
     </th>

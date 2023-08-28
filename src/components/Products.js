@@ -69,49 +69,59 @@ function Products() {
   };
 
   return (
-    <>
-      {/*  =============== filters ============== */}
-      <div className="flex w-9/12 mx-auto text-sm italic">
-        {filtersArr.length > 0 &&
-          filtersArr.map((category) => (
-            <FilterButton
-              key={category}
-              category={category}
-              isSelected={selectedFilters.includes(category)}
-              onClick={handleOptionClick}
-            />
-          ))}
-      </div>
-      {/* ===============  rows dropdown menu =============== */}
-      <DropDownMenu
-        rowsNumber={rowsNumber}
-        handleOptionChange={handleRowOptionChange}
-        rowsNumberArr={rowsNumberArr}
-      />
-      {/* =============== table =============== */}
-      <table className="bg-white">
-        <thead>
-          <tr>
-            {/* ===============  sorting  =============== */}
-            <SortedColumn
-              column={column}
-              sortConfig={sortConfig}
-              handleSort={handleSort}
-            />
+    <div className="flex justify-center items-center">
+      <div className="grid grid-cols-[3fr,1fr] gap-5 w-11/12">
+        <div className="flex justify-center items-center">
+          {/* =============== table =============== */}
+          <table className="w-full shadow-xl  mb-11">
+            <thead className="text-gray-800">
+              <tr>
+                {/* ===============  sorting  =============== */}
+                <SortedColumn
+                  column={column}
+                  sortConfig={sortConfig}
+                  handleSort={handleSort}
+                />
 
-            <th>Title</th>
-            <th>Photo</th>
-            <th>Price</th>
-            <th>Rating</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredAndSortedData.map((product) => (
-            <ProductRow key={product.id} product={product} />
-          ))}
-        </tbody>
-      </table>
-    </>
+                <th className="px-8 py-6 text-lg font-light">Title</th>
+                <th className="px-8 py-6 text-lg font-light">Photo</th>
+                <th className="px-8 py-6 text-lg font-light">Price</th>
+                <th className="px-8 py-6 text-lg font-light">Rating</th>
+              </tr>
+            </thead>
+            <tbody className=" bg-white">
+              {filteredAndSortedData.map((product) => (
+                <ProductRow key={product.id} product={product} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex flex-col justify-start items-center">
+          {/*  =============== filters ============== */}
+          <div className="flex flex-col h-64 items-start justify-evenly rounded-lg border-4 border-dotted text-sm italic mb-6 border-gray-200">
+            <span className="font-semibold text-base text-blue-900 px-6">
+              Filters
+            </span>
+            {filtersArr.length > 0 &&
+              filtersArr.map((category) => (
+                <FilterButton
+                  key={category}
+                  category={category}
+                  isSelected={selectedFilters.includes(category)}
+                  onClick={handleOptionClick}
+                />
+              ))}
+          </div>
+          {/* ===============  rows dropdown menu =============== */}
+          <DropDownMenu
+            rowsNumber={rowsNumber}
+            handleOptionChange={handleRowOptionChange}
+            rowsNumberArr={rowsNumberArr}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
