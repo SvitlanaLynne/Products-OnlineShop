@@ -3,7 +3,7 @@ import Logo from "../components/Logo";
 
 function Home() {
   return (
-    <div className="grid grid-rows-[16rem,1fr] gap-10 bg-slate-50">
+    <div className="grid grid-rows-[16rem,1fr] gap-10 bg-slate-50 h-full">
       <Logo />
       <Products />
     </div>
