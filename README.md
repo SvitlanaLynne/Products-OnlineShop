@@ -17,11 +17,11 @@ The primary goal of the "products" project was to enhance my Frontend coding ski
 ## Screenshots
 
 1. Homepage with the logo, table of products, filters, and sortable columns.
-   ![Homepage](/products/src/assets/OnlineShop_HomePage.jpg)
+   ![Homepage](./src/assets/OnlineShop_HomePage.jpg)
 
 2. Filtering and sorting.
-   ![Filtering, Sorting and Rows' number](/products/src/assets/OnlineShop_Filters.jpg)
-   ![Filtering, Sorting and Rows' number](/products/src/assets/OnlineShop_RowsNumber.jpg)
+   ![Filtering, Sorting and Rows' number](./src/assets/OnlineShop_Filters.jpg)
+   ![Filtering, Sorting and Rows' number](./src/assets/OnlineShop_RowsNumber.jpg)
 
 3. Product details page.
-   ![Product Details](/products/src/assets/OnlineShop_Details.jpg)
+   ![Product Details](./src/assets/OnlineShop_Details.jpg)
