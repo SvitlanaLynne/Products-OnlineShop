@@ -53,7 +53,7 @@ function Products() {
     setSelectedFilters((prevSelectedOptions) =>
       prevSelectedOptions.includes(category)
         ? prevSelectedOptions.filter((elem) => elem !== category)
-        : [...prevSelectedOptions, category]
+        : [prevSelectedOptions, category]
     );
   };
   // ===============  SORTING  ===============
